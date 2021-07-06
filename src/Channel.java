@@ -7,6 +7,7 @@ public class Channel {
     private String id;
     private String nickname;
     private String channelNo;
+    private String otherId;
 
     public String getChannelNo() {
         return channelNo;
@@ -18,9 +19,10 @@ public class Channel {
     }
     public void ShowChannel(){
         Scanner s = new Scanner(System.in);
+        String[] others = new String[3];
         Map<Integer, String> channelPair = new HashMap<>();
         System.out.println("------------------------"+nickname+"님의 대화방--------------------------");
-        Select select = new Select("SELECT CHANNEL_NO,TO_CHAR(CHANNEL_DATE,'MM/DD HH24:MM'), CASE WHEN CHANNEL_MEMBER1 = '"+id+"' THEN CHANNEL_MEMBER2 WHEN CHANNEL_MEMBER2 = '"+id+"' THEN CHANNEL_MEMBER1 END AS CHATMEM FROM CHANNEL WHERE CHANNEL_NO IN (SELECT DISTINCT CHANNEL_NO FROM CHANNEL WHERE CHANNEL_MEMBER1 = '"+id+"' OR CHANNEL_MEMBER2 = '"+id+"') ORDER BY 2 DESC");
+        Select select = new Select("SELECT a.CNO, a.CDATE, a.OID, b.MEMBER_NICK FROM (SELECT CHANNEL_NO AS CNO, TO_CHAR(CHANNEL_DATE,'MM/DD HH24:MM') AS CDATE, CASE WHEN CHANNEL_MEMBER1 = '"+id+"' THEN CHANNEL_MEMBER2 WHEN CHANNEL_MEMBER2 = '"+id+"' THEN CHANNEL_MEMBER1 END AS OID FROM CHANNEL WHERE CHANNEL_NO IN (SELECT DISTINCT CHANNEL_NO FROM CHANNEL WHERE CHANNEL_MEMBER1 = '"+id+"' OR CHANNEL_MEMBER2 = '"+id+"') ORDER BY 2 DESC)a, CMEMBER b WHERE a.OID = b.MEMBER_ID ");
         select.Connect();
         try {
             select.Execute();
@@ -29,14 +31,12 @@ public class Channel {
         }
         try {
             int columnCnt = select.rsmd.getColumnCount();
-            String[] channelColumn = new String[3];
-            for(int i=0; i<columnCnt; i++){
-                channelColumn[i] = select.rsmd.getColumnName(i+1);
-            }
+
             int i = 1;
             while(select.rs.next()){
                 channelPair.put(i,select.rs.getString(select.rsmd.getColumnName(1)));
-                System.out.println(i+". "+select.rs.getString(select.rsmd.getColumnName(2))+"       "+select.rs.getString(select.rsmd.getColumnName(3))+"님과의 대화");
+                System.out.println(i+". "+select.rs.getString(select.rsmd.getColumnName(2))+"       "+select.rs.getString(select.rsmd.getColumnName(4))+"님과의 대화");
+                others[i-1] = select.rs.getString(select.rsmd.getColumnName(3));
                 i++;
             }
             if(channelPair.isEmpty()){
@@ -54,7 +54,17 @@ public class Channel {
             throwables.printStackTrace();
         }
         String channelInput = s.next();
-        channelNo = channelPair.get(Integer.parseInt(channelInput));
-        select.Close();
+        if(channelInput.equals("0")){
+            SearchMember searchMember = new SearchMember(id);
+            searchMember.memberList();
+        }else {
+            channelNo = channelPair.get(Integer.parseInt(channelInput));
+            otherId = others[Integer.parseInt(channelInput) - 1];
+            select.Close();
+        }
+    }
+
+    public String getOtherId() {
+        return otherId;
     }
 }

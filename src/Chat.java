@@ -8,17 +8,17 @@ public class Chat {
     private String id;
     private String inputMsg = "";
     private int msgCount = 0;
-    private String otherId;
     private String nick;
-    public boolean flag = true;
+    private String otherId;
     Timer timer = new Timer();
 
-    public Chat(String channelNo, String id) {
+    public Chat(String channelNo, String id, String otherId) {
         this.channelNo = channelNo;
         this.id = id;
+        this.otherId = otherId;
     }
 
-    public void ChatStart(){
+    public void ChatStart() throws Exception {
         Scanner s = new Scanner(System.in);
         Select select = new Select("SELECT a.MESSAGE_FROM , a.MESSAGE_TO , a.MESSAGE , a.MESSAGE_DATE , b.MEMBER_NICK FROM MESSAGE a, CMEMBER b WHERE a.MESSAGE_FROM = b.MEMBER_ID AND CHANNEL_NO = '" + channelNo + "' ORDER BY MESSAGE_DATE");
         select.Connect();
@@ -40,7 +40,6 @@ public class Chat {
                     nick = select.rs.getString(select.rsmd.getColumnName(5));
                 } else{
                     System.out.println(" <"+select.rs.getString(select.rsmd.getColumnName(5))+">");
-                    otherId = select.rs.getString(select.rsmd.getColumnName(1));
                     System.out.println(select.rs.getString(select.rsmd.getColumnName(3)));
                 }
                 msgCount++;
@@ -56,7 +55,7 @@ public class Chat {
         try{
             getInput();
         }catch(Exception e){
-            System.out.println(e);
+            throw new Exception();
         }
 
     }
@@ -76,7 +75,11 @@ public class Chat {
                         }
                         else{
                             timer.cancel();
-                            new Chat(channelNo,id).ChatStart();
+                            try {
+                                new Chat(channelNo,id,otherId).ChatStart();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -90,13 +93,13 @@ public class Chat {
         Scanner s = new Scanner(System.in);
         inputMsg = s.nextLine();
         timer.cancel();
-        if (inputMsg.equals("exit")){
-//            flag = false;
+        if(inputMsg.equals("exit")){
+            throw new Exception();
         }else {
-            DBConnect insert = new Insert("INSERT INTO MESSAGE VALUES(1,'" + id + "','" + otherId + "','" + inputMsg + "',SYSDATE)");
+            DBConnect insert = new Insert("INSERT INTO MESSAGE VALUES(" + channelNo + ",'" + id + "','" + otherId + "','" + inputMsg + "',SYSDATE)");
             insert.Connect();
             insert.Execute();
-            new Chat(channelNo, id).ChatStart(); // 입력 후
+            new Chat(channelNo, id,otherId).ChatStart(); // 입력 후
         }
     }
     public int newChat(){

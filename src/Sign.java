@@ -45,7 +45,13 @@ public class Sign {
                     select.Connect();
                     select.Execute();
                     if (!select.rs.next()) {
-                        System.out.println("아이디가 존재하지 않습니다.");
+                        System.out.println();
+                        System.out.println(" ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
+                        System.out.println();
+                        System.out.println("          아이디가 존재하지 않습니다.        ");
+                        System.out.println();
+                        System.out.println(" ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
+                        System.out.println();
                         continue;
                     } else if (select.rs.getString(2).equals(pw)) {
                         nickname = select.rs.getString(3);

@@ -11,8 +11,10 @@ public class ChatMain {
         Channel channel = new Channel(sign.getId(),sign.getNickname());
         while(true){
             channel.ShowChannel();
-            Chat chat = new Chat(channel.getChannelNo(), sign.getId());
-            chat.ChatStart();
+            Chat chat = new Chat(channel.getChannelNo(), sign.getId(), channel.getOtherId());
+            try {
+                chat.ChatStart();
+            } catch (Exception e) {}
         }
     }
 //        System.out.println("----------------------------SIGN IN----------------------------");
