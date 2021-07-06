@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.util.Scanner;
+import java.sql.SQLException;
 
 public class Sign {
     private String id;
@@ -105,25 +106,20 @@ public class Sign {
             System.out.print("등록하시겠습니까? (y/n) ");
             String yn = s.next();
             if (yn.equals("y")) {
+                DBConnect insert = new Insert("INSERT INTO CMEMBER VALUES('"+id+"','"+pw+"','"+nickname+"')");
+                insert.Connect();
                 try {
-                    stmt = conn.createStatement();
-                    String sql = "INSERT INTO CMEMBER VALUES('"+id+"','"+pw+"','"+nickname+"') ";
-                    rs = stmt.executeQuery(sql);
+                    insert.Execute();
                     System.out.println("등록 완료!");
+                    insert.Close();
                     SignIn();
-                } catch (SQLException e) {
+                    break;
+                } catch (Exception e) {
                     System.out.println("아이디가 중복됩니다. 다시 등록하세요");
-                    continue;
                 }
-                break;
-
-            } else {
-                continue;
             }
-        }
-        if(stmt!=null) try {stmt.close();}catch(Exception e){}
-        if(conn!=null) try {conn.close();}catch(Exception e){}
 
+        }
         }
 
 

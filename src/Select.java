@@ -6,7 +6,7 @@ public class Select extends DBConnect{
     }
 
     @Override
-    public void Result() {
+    public void Result() throws Exception {
         super.Connect();
         super.Execute();
         try {

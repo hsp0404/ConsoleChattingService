@@ -1,10 +1,16 @@
+import java.sql.SQLException;
+
 public class Insert extends DBConnect{
-    public Insert(String sql) {
-        super(sql);
+    @Override
+    public void Execute() throws Exception {
+        try {
+            int r = stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new Exception();
+        }
     }
 
-    @Override
-    public void Execute() {
-        super.Execute();
+    public Insert(String sql) {
+        super(sql);
     }
 }

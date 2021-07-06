@@ -9,8 +9,11 @@ public class ChatMain {
         Sign sign = new Sign();
         sign.SignIn();
         Channel channel = new Channel(sign.getId(),sign.getNickname());
-        channel.ShowChannel();
-
+        while(true){
+            channel.ShowChannel();
+            Chat chat = new Chat(channel.getChannelNo(), sign.getId());
+            chat.ChatStart();
+        }
     }
 //        System.out.println("----------------------------SIGN IN----------------------------");
 }

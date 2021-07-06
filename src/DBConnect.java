@@ -31,7 +31,7 @@ public class DBConnect {
             System.out.println(e);
         }
     }
-    public void Execute(){
+    public void Execute() throws Exception {
         try {
             rs = stmt.executeQuery(sql);
             rsmd = rs.getMetaData();
@@ -39,7 +39,7 @@ public class DBConnect {
             System.out.println("SQL Error : " + e.getMessage());
         }
     }
-    public void Result(){
+    public void Result() throws Exception {
     }
     public void Close(){
         if(rs!=null) try {rs.close();}catch(Exception e){}
