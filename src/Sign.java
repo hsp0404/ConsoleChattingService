@@ -9,18 +9,16 @@ public class Sign {
     public String getNickname() {
         return nickname;
     }
-
     private String nickname;
-
     public String getId() {
         return id;
     }
-
     public String getPw() {
         return pw;
     }
-
     public Sign() {
+        id = "";
+        pw = "";
     }
 
     public void SignIn() {
@@ -33,7 +31,7 @@ public class Sign {
                 System.out.println();
                 System.out.print("                     ID : ");
                 this.id = s.next();
-                if (id.equals("Signup")) {
+                if (id.equals("Signup")||id.equals("signup")) {
                     throw new Exception();
                 }
                 System.out.println();
@@ -111,7 +109,7 @@ public class Sign {
             System.out.println("ID : " + id + ", 비밀번호: " + pw + ", 닉네임 : " + nickname);
             System.out.print("등록하시겠습니까? (y/n) ");
             String yn = s.next();
-            if (yn.equals("y")) {
+            if (yn.equals("y")||yn.equals("Y")) {
                 DBConnect insert = new Insert("INSERT INTO CMEMBER VALUES('"+id+"','"+pw+"','"+nickname+"')");
                 insert.Connect();
                 try {

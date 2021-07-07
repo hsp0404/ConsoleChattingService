@@ -17,7 +17,6 @@ public class Chat {
         this.id = id;
         this.otherId = otherId;
     }
-
     public void ChatStart() throws Exception {
         Scanner s = new Scanner(System.in);
         Select select = new Select("SELECT a.MESSAGE_FROM , a.MESSAGE_TO , a.MESSAGE , a.MESSAGE_DATE , b.MEMBER_NICK FROM MESSAGE a, CMEMBER b WHERE a.MESSAGE_FROM = b.MEMBER_ID AND CHANNEL_NO = '" + channelNo + "' ORDER BY MESSAGE_DATE");
@@ -35,11 +34,11 @@ public class Chat {
             }
             while(select.rs.next()){
                 if(select.rs.getString(select.rsmd.getColumnName(1)).equals(id)){
-                    System.out.println("                                 <나>");
-                    System.out.println("                              "+select.rs.getString(select.rsmd.getColumnName(3)));
+                    System.out.println("                                                  <나>");
+                    System.out.println("                                                  "+select.rs.getString(select.rsmd.getColumnName(3)));
                     nick = select.rs.getString(select.rsmd.getColumnName(5));
                 } else{
-                    System.out.println(" <"+select.rs.getString(select.rsmd.getColumnName(5))+">");
+                    System.out.println("<"+select.rs.getString(select.rsmd.getColumnName(5))+">");
                     System.out.println(select.rs.getString(select.rsmd.getColumnName(3)));
                 }
                 msgCount++;
@@ -50,12 +49,25 @@ public class Chat {
             System.out.print( ">>" );
 
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
         }
         try{
             getInput();
         }catch(Exception e){
             throw new Exception();
+        }
+//        Scanner s = new Scanner(System.in);
+//        스캐너가 3번 실행됨 왜?
+        inputMsg = s.nextLine();
+        timer.cancel();
+        if(inputMsg.equals("exit")){
+            throw new Exception();
+        }else {
+            DBConnect insert = new Insert("INSERT INTO MESSAGE VALUES(" + channelNo + ",'" + id + "','" + otherId + "','" + inputMsg + "',SYSDATE)");
+            insert.Connect();
+            insert.Execute();
+            System.out.println();
+            System.out.println("----------------------------------------------------------------");
+            new Chat(channelNo, id,otherId).ChatStart(); // 입력 후
         }
 
     }
@@ -78,7 +90,6 @@ public class Chat {
                             try {
                                 new Chat(channelNo,id,otherId).ChatStart();
                             } catch (Exception e) {
-                                e.printStackTrace();
                             }
                         }
                     }
@@ -90,17 +101,17 @@ public class Chat {
                 }
             }
         }, 5*1000 );
-        Scanner s = new Scanner(System.in);
-        inputMsg = s.nextLine();
-        timer.cancel();
-        if(inputMsg.equals("exit")){
-            throw new Exception();
-        }else {
-            DBConnect insert = new Insert("INSERT INTO MESSAGE VALUES(" + channelNo + ",'" + id + "','" + otherId + "','" + inputMsg + "',SYSDATE)");
-            insert.Connect();
-            insert.Execute();
-            new Chat(channelNo, id,otherId).ChatStart(); // 입력 후
-        }
+//        Scanner s = new Scanner(System.in);
+//        inputMsg = s.nextLine();
+//        timer.cancel();
+//        if(inputMsg.equals("exit")){
+//            throw new Exception();
+//        }else {
+//            DBConnect insert = new Insert("INSERT INTO MESSAGE VALUES(" + channelNo + ",'" + id + "','" + otherId + "','" + inputMsg + "',SYSDATE)");
+//            insert.Connect();
+//            insert.Execute();
+//            new Chat(channelNo, id,otherId).ChatStart(); // 입력 후
+//        }
     }
     public int newChat(){
         Select select2 = new Select("SELECT MESSAGE_FROM, MESSAGE_TO,MESSAGE FROM MESSAGE WHERE CHANNEL_NO = '" + channelNo + "' ORDER BY MESSAGE_DATE");
@@ -115,10 +126,9 @@ public class Chat {
             while(select2.rs.next()) {
                 cnt++;
             }
-
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         return cnt;
     }
 }
